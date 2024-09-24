@@ -12,11 +12,13 @@
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@nuxt/icon": "^1.5.1",
+    "@nuxtjs/cloudinary": "^3.1.0",
     "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^11.1.0",
     "@vueuse/nuxt": "^11.1.0",
     "arctic": "^1.9.2",
     "class-variance-authority": "^0.7.0",
+    "cloudinary": "^2.5.0",
     "clsx": "^2.1.1",
     "embla-carousel-vue": "^8.3.0",
     "lucia": "^3.2.0",
