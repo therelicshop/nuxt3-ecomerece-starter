@@ -1,4 +1,4 @@
-# Nuxt 3 Ecommerece Starter Guide
+# Nuxt 3 Ecommerece Starter Guide ( [Youtube Video](https://youtu.be/uy6LGbCQqwk?si=lySvNoS_Y6WS9WZh) )
 
 If you want to follow on your own ( want to install latest depencies ), please follow the self documentation section. 
 
@@ -28,7 +28,7 @@ bun install
 
 ## Environment Variable Setup
 
-Copy the variables from .env.example file and create new file called .env. Look at the [Youtube Video](https://nuxt.com/docs/getting-started/introduction) to learn how you can setup.
+Copy the variables from .env.example file and create new file called .env. Look at the [Youtube Video](https://youtu.be/uy6LGbCQqwk?si=lySvNoS_Y6WS9WZh) to learn how you can setup.
 
 
 ## Development Server
