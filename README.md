@@ -1,3 +1,17 @@
+---
+Build Faster, Design Better with QuasarUI Components and Templates.
+
+Try [QuasarUI now](https://www.quasarui.com/)
+---
+
+
+[<img src="https://www.quasarui.com/img/og.webp">](https://www.quasarui.com/)
+
+Build Faster, Design Better with QuasarUI Components and Templates.
+
+QuasarUI is a collection of templates and over 480 beautifully crafted UI components built with Qusar, aimed at making your development process easier and faster.
+
+
 # Nuxt 3 Ecommerece Starter Guide ( [Youtube Video](https://youtu.be/uy6LGbCQqwk?si=lySvNoS_Y6WS9WZh) )
 
 If you want to follow on your own ( want to install latest depencies ), please follow the self documentation section. 
