@@ -114,7 +114,7 @@ async function handleLogin() {
       await navigateTo('/dashboard')
     }
 
-  } catch (err: any) {
+  } catch (err) {
     error.value = err.data?.statusMessage || 'Login failed. Please check your credentials.'
   } finally {
     isLoading.value = false
