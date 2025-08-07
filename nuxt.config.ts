@@ -15,17 +15,36 @@ export default defineNuxtConfig({
     componentDir: './components/ui'
   },
   runtimeConfig: {
+    // Authentication
     githubId: '',
     githubSecret: '',
+    jwtSecret: process.env.JWT_SECRET || 'your-super-secret-jwt-key',
+    
+    // eBay Integration
+    ebayClientId: process.env.EBAY_CLIENT_ID || 'RyDurham-relic-PRD-a0be0d98a-2d7a9c8b',
+    ebayClientSecret: process.env.EBAY_CLIENT_SECRET || 'PRD-0be0d98a084d-54d5-4b15-a125-4c30',
+    ebayDevId: process.env.EBAY_DEV_ID || 'dcb2dbc8-d680-4ed7-8763-e33e88064e97',
+    ebayRuName: process.env.EBAY_RUNAME || 'Ry_Durham-RyDurham-relic--diwpygxre',
+    ebayEnvironment: process.env.EBAY_ENVIRONMENT || 'Production',
+    ebayOauthRedirectUri: process.env.EBAY_OAUTH_REDIRECT_URI || 'http://localhost:3000/api/auth/ebay/callback',
+    
+    // Payments
     stripeSecret: '',
     stripeWebhookSecret: '',
+    nowpaymentsApiKey: process.env.NOWPAYMENTS_API_KEY || '',
+    nowpaymentsIpnSecret: process.env.NOWPAYMENTS_IPN_SECRET || '',
+    
     public: {
       cloudinaryCloudName: '',
       uploadPreset: '',
       stripeKey: '',
+      nowpaymentsApiUrl: 'https://api.nowpayments.io/v1',
     },
     cloudinaryApiKey: '',
     cloudinaryApiSecret: '',
+    
+    // Database
+    databaseUrl: process.env.DATABASE_URL || 'mongodb://localhost:27017/multi-platform-ecommerce',
   },
   cloudinary: {
     cloudName: process.env.NUXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
