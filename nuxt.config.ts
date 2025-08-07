@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     prefix: '',
     componentDir: './components/ui'
   },
+  nitro: {
+    preset: 'vercel-edge', // Optimized for Vercel deployment
+  },
   runtimeConfig: {
     // Authentication
     githubId: '',
@@ -39,6 +42,7 @@ export default defineNuxtConfig({
       uploadPreset: '',
       stripeKey: '',
       nowpaymentsApiUrl: 'https://api.nowpayments.io/v1',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     },
     cloudinaryApiKey: '',
     cloudinaryApiSecret: '',
@@ -51,4 +55,18 @@ export default defineNuxtConfig({
     uploadPreset: process.env.NUXT_PUBLIC_UPLOAD_PRESET,
     apiKey: process.env.NUXT_CLOUDINARY_API_KEY,
   },
+  // SEO and Performance
+  app: {
+    head: {
+      title: 'Multi-Platform Inventory Management | SaaS',
+      meta: [
+        { name: 'description', content: 'Comprehensive inventory management for eBay, WooCommerce & Shopware with crypto payments' },
+        { name: 'keywords', content: 'inventory management, ecommerce, ebay, woocommerce, shopware, cryptocurrency payments' }
+      ]
+    }
+  },
+  // Build optimizations for production
+  build: {
+    transpile: ['@prisma/client']
+  }
 })

@@ -1,0 +1,25 @@
+{
+  "build": {
+    "env": {
+      "NUXT_NITRO_PRESET": "vercel-edge"
+    }
+  },
+  "functions": {
+    ".output/server/**": {
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/.output/server/index.mjs"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/.output/public/$1"
+    }
+  ]
+}
