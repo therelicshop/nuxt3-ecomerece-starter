@@ -151,7 +151,7 @@ async function handleRegister() {
       await navigateTo('/dashboard')
     }
 
-  } catch (err: any) {
+  } catch (err) {
     error.value = err.data?.statusMessage || 'Registration failed. Please try again.'
   } finally {
     isLoading.value = false
