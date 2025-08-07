@@ -1,0 +1,253 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// User Management & Authentication
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  avatar    String?
+  plan      String   @default("free") // free, pro, enterprise
+  status    String   @default("active") // active, suspended, deleted
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  products        Product[]
+  suppliers       Supplier[]
+  orders          Order[]
+  alerts          Alert[]
+  integrations    Integration[]
+  paymentMethods  PaymentMethod[]
+
+  @@map("users")
+}
+
+// Product Management
+model Product {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String   @db.ObjectId
+  name             String
+  sku              String
+  barcode          String?
+  description      String?
+  category         String
+  brand            String?
+  price            Float
+  costPrice        Float?
+  stockQuantity    Int
+  reorderPoint     Int      @default(10)
+  weight           Float?
+  dimensions       Json?    // {length, width, height}
+  images           String[]
+  tags             String[]
+  status           String   @default("active") // active, inactive, archived
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplier         Supplier?  @relation(fields: [supplierId], references: [id])
+  supplierId       String?    @db.ObjectId
+  platformProducts PlatformProduct[]
+  orderItems       OrderItem[]
+  alerts           Alert[]
+
+  @@unique([userId, sku])
+  @@map("products")
+}
+
+// Platform-specific product data
+model PlatformProduct {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String  @db.ObjectId
+  platform   String  // ebay, woocommerce, shopware
+  platformId String  // Platform-specific product ID
+  active     Boolean @default(false)
+  price      Float
+  quantity   Int
+  lastSync   DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, platform])
+  @@map("platform_products")
+}
+
+// Supplier Management
+model Supplier {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @db.ObjectId
+  name          String
+  contactPerson String?
+  email         String?
+  phone         String?
+  address       Json?    // {street, city, state, zipCode, country}
+  paymentTerms  String?  // Net 15, Net 30, etc.
+  rating        Float    @default(0)
+  totalOrders   Int      @default(0)
+  totalSpent    Float    @default(0)
+  categories    String[]
+  status        String   @default("active") // active, inactive
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lastOrderDate DateTime?
+
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products      Product[]
+
+  @@map("suppliers")
+}
+
+// Order Management
+model Order {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  orderNumber    String
+  platform       String   // ebay, woocommerce, shopware
+  platformOrderId String? // Platform-specific order ID
+  customer       Json     // {name, email, address}
+  subtotal       Float
+  tax            Float
+  shipping       Float
+  total          Float
+  status         String   // pending, processing, shipped, completed, cancelled
+  paymentStatus  String   // pending, paid, failed, refunded
+  paymentMethod  String   // credit_card, paypal, crypto, bank_transfer
+  shippingMethod String?
+  trackingNumber String?
+  notes          String?
+  orderDate      DateTime
+  shippedDate    DateTime?
+  deliveredDate  DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items          OrderItem[]
+
+  @@unique([userId, orderNumber])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String @db.ObjectId
+  productId String @db.ObjectId
+  name      String
+  sku       String
+  quantity  Int
+  price     Float
+
+  // Relations
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+// Alert System
+model Alert {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  type      String   // low_stock, sync_error, price_discrepancy, new_order
+  severity  String   // high, medium, low, info
+  title     String
+  message   String
+  data      Json?    // Additional alert-specific data
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?  @db.ObjectId
+
+  @@map("alerts")
+}
+
+// Platform Integration Management
+model Integration {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @db.ObjectId
+  platform     String    // ebay, woocommerce, shopware
+  status       String    @default("disconnected") // connected, disconnected, error
+  credentials  Json      // Encrypted credentials/tokens
+  lastSync     DateTime?
+  syncStatus   String    @default("idle") // idle, syncing, error
+  apiCallsToday Int      @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+  @@map("integrations")
+}
+
+// Payment Method Management (for crypto and traditional payments)
+model PaymentMethod {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  type        String   // stripe, nowpayments
+  name        String   // Display name
+  config      Json     // Configuration data
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_methods")
+}
+
+// Crypto Payment Tracking
+model CryptoPayment {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  orderId         String?  @db.ObjectId
+  nowpaymentsId   String   @unique // NOWpayments payment ID
+  currency        String   // BTC, ETH, USDT, etc.
+  amount          Float    // Original amount in USD
+  cryptoAmount    Float    // Amount in crypto currency
+  address         String?  // Payment address
+  status          String   // waiting, confirming, confirmed, failed, expired
+  txHash          String?  // Blockchain transaction hash
+  confirmations   Int      @default(0)
+  requiredConfirms Int     @default(1)
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("crypto_payments")
+}
+
+// System Settings & Configuration
+model Settings {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId @unique
+  settings  Json     // User-specific settings
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
