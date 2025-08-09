@@ -61,7 +61,8 @@ export default defineNuxtConfig({
       title: 'Multi-Platform Inventory Management | SaaS',
       meta: [
         { name: 'description', content: 'Comprehensive inventory management for eBay, WooCommerce & Shopware with crypto payments' },
-        { name: 'keywords', content: 'inventory management, ecommerce, ebay, woocommerce, shopware, cryptocurrency payments' }
+        { name: 'keywords', content: 'inventory management, ecommerce, ebay, woocommerce, shopware, cryptocurrency payments' },
+        { httpEquiv: 'Content-Security-Policy', content: "script-src 'self' 'unsafe-inline' 'unsafe-eval'" }
       ]
     }
   },
